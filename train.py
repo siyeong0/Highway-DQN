@@ -12,11 +12,10 @@ from network import DQN
 from utils import Transition, ReplayMemory, create_highway_env, ActionSelector, Visualizer, get_obs_shape
 
 import os
-#os.environ["OMP_NUM_THREADS"] = "1"
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 os.environ['PYDEVD_DISABLE_FILE_VALIDATION']='1'
 
-parser = argparse.ArgumentParser(description='A3C')
+parser = argparse.ArgumentParser(description='TRAIN')
 parser.add_argument('--lr', type=float, default=1e-4,
                     help='learning rate (default: 1e-4)')
 parser.add_argument('--gamma', type=float, default=0.99,
@@ -50,7 +49,7 @@ def train(args):
         print("Error: Failed to create the directory.")
     # Setup train environment
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
+    print(f'Device : {device}')
     env = create_highway_env(args.env_name)
     action_space = env.action_space
     observation_shape = get_obs_shape()
@@ -126,15 +125,17 @@ def train(args):
                 break
         # Save model
         if (ep + 1) % args.save_freq == 0:
-            torch.save(target_net.state_dict(), f'{DIR}/net_{ep}.pth')
+            torch.save(policy_net.state_dict(), f'{DIR}/policy_{ep+1}.pth')
+            torch.save(target_net.state_dict(), f'{DIR}/target_{ep+1}.pth')
             print(f'# EP{ep+1} SAVED...')
             
     print("##### END #####")
     visualizer.close()
     
-    torch.save(target_net.state_dict(), f'{DIR}/result.pth')
-    return target_net
+    torch.save(policy_net.state_dict(), f'{DIR}/policy.pth')
+    torch.save(target_net.state_dict(), f'{DIR}/target.pth')
+    return policy_net, target_net
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    net = train(args)
+    policy_net, target_net = train(args)
