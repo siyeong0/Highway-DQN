@@ -17,6 +17,9 @@ Reinforcement learning project to train the highway driver using deep q learning
     <em>The highway-fast-v0 environment.</em>
 </p>
 
+## Pretreind Model
+[Drive link](https://drive.google.com/drive/folders/1pNZsgTemooiZHtzgXY55rG-Hk8YYF5-C?usp=share_link)
+
 ## References
 
 * [HighwayEnv](https://github.com/Farama-Foundation/HighwayEnv)
